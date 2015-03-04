@@ -28,7 +28,7 @@ while obj['status'] == 'queued' do
   sleep(5)
 end
 
-uri = URI("https://api.idolondemand.com/1/job/results/" + obj['jobID'])
+uri = URI("https://api.idolondemand.com/1/job/result/" + obj['jobID'])
 params = {:apikey => "3e25f657-9700-4e26-99ee-4c2544536e7a"}
 uri.query = URI.encode_www_form(params)
 

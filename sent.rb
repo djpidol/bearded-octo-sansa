@@ -1,19 +1,77 @@
 require "net/http"
 require 'json'
 
-uri = URI("https://api.idolondemand.com/1/api/async/recognizespeech/v1")
-#params = { :url => "http://downloads.bbc.co.uk/podcasts/radio4/thought/thought_20150302-1134a.mp3", :language => "en-GB", :apikey => "3e25f657-9700-4e26-99ee-4c2544536e7a"}
-#params = { :file => "thought.mp3", :language => "en-GB", :apikey => "3e25f657-9700-4e26-99ee-4c2544536e7a", :interval => "10"}
-#uri.query = URI.encode_www_form(params)
+text = "It might seem crazy what I'm about to say
+Sunshine she's here, you can take a break
+I'm a hot air balloon that could go to space
+With the air, like I don't care baby by the way
 
-#res = Net::HTTP.post_form(uri, 'file' => "thought.mp3", 'language' => "en-GB", 'apikey' => "3e25f657-9700-4e26-99ee-4c2544536e7a", 'interval' => "10")
-res = Net::HTTP.post_form(uri, 'reference' => "a3e0121e-cc8a-4d3b-9f52-0b012518ecdc", 'language' => "en-GB", 'apikey' => "3e25f657-9700-4e26-99ee-4c2544536e7a", 'interval' => "10")
+{Uh}
 
-#res = Net::HTTP.get_response(uri)
+[Chorus:]
+Because I'm happy
+Clap along if you feel like a room without a roof
+Because I'm happy
+Clap along if you feel like happiness is the truth
+Because I'm happy
+Clap along if you know what happiness is to you
+Because I'm happy
+Clap along if you feel like that's what you wanna do
+
+[Verse 2:]
+Here come bad news talking this and that, yeah,
+Well, give me all you got, and don't hold it back, yeah,
+Well, I should probably warn you I'll be just fine, yeah,
+No offense to you, don't waste your time
+Here's why
+
+[Chorus]
+
+{Hey
+Go
+Uh}
+
+[Bridge:]
+(Happy)
+Bring me down
+Can't nothing
+Bring me down
+My level's too high
+Bring me down
+Can't nothing
+Bring me down
+I said (let me tell you now)
+Bring me down
+Can't nothing
+Bring me down
+My level's too high
+Bring me down
+Can't nothing
+Bring me down
+I said
+
+[Chorus x2]
+
+{Hey
+Go
+Uh}
+
+(Happy) [repeats]
+Bring me down... can't nothing...
+Bring me down... my level's too high...
+Bring me down... can't nothing...
+Bring me down, I said (let me tell you now)
+
+[Chorus x2]
+
+{Hey
+C'mon}"
+
+uri = URI("https://api.idolondemand.com/1/api/async/analyzesentiment/v1")
+uri.query = URI.encode_www_form({ :text => text, :language => "eng", :apikey => "3e25f657-9700-4e26-99ee-4c2544536e7a"})
+
+res = Net::HTTP.get_response(uri)
 obj = JSON.parse(res.body)
-
-# puts res.body if res.is_a?(Net::HTTPSuccess)
-puts obj['jobID']
 
 uri = URI("https://api.idolondemand.com/1/job/status/" + obj['jobID'])
 params = {:apikey => "3e25f657-9700-4e26-99ee-4c2544536e7a"}
@@ -28,10 +86,9 @@ while obj['status'] == 'queued' do
   sleep(5)
 end
 
-uri = URI("https://api.idolondemand.com/1/job/results/" + obj['jobID'])
+uri = URI("https://api.idolondemand.com/1/job/result/" + obj['jobID'])
 params = {:apikey => "3e25f657-9700-4e26-99ee-4c2544536e7a"}
 uri.query = URI.encode_www_form(params)
 
 res = Net::HTTP.get_response(uri)
 puts res.body
-
