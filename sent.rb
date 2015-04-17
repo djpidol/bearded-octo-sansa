@@ -1,6 +1,7 @@
 require "net/http"
 require 'json'
 
+api_key= "58fa4fef-c49a-464e-82be-a30aad009099"
 text = "It might seem crazy what I'm about to say
 Sunshine she's here, you can take a break
 I'm a hot air balloon that could go to space
@@ -68,13 +69,13 @@ Bring me down, I said (let me tell you now)
 C'mon}"
 
 uri = URI("https://api.idolondemand.com/1/api/async/analyzesentiment/v1")
-uri.query = URI.encode_www_form({ :text => text, :language => "eng", :apikey => "3e25f657-9700-4e26-99ee-4c2544536e7a"})
+uri.query = URI.encode_www_form({ :text => text, :language => "eng", :apikey => api_key})
 
 res = Net::HTTP.get_response(uri)
 obj = JSON.parse(res.body)
 
 uri = URI("https://api.idolondemand.com/1/job/status/" + obj['jobID'])
-params = {:apikey => "3e25f657-9700-4e26-99ee-4c2544536e7a"}
+params = {:apikey => api_key}
 uri.query = URI.encode_www_form(params)
 
 res = Net::HTTP.get_response(uri)
@@ -87,7 +88,7 @@ while obj['status'] == 'queued' do
 end
 
 uri = URI("https://api.idolondemand.com/1/job/result/" + obj['jobID'])
-params = {:apikey => "3e25f657-9700-4e26-99ee-4c2544536e7a"}
+params = {:apikey => api_key}
 uri.query = URI.encode_www_form(params)
 
 res = Net::HTTP.get_response(uri)
