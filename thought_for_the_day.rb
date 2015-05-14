@@ -14,7 +14,7 @@ require 'rss'
 # insert your api_key here, you can request by registering at
 # https://www.idolondemand.com/signup.html
 # and then go to Tools->Account->Manage Your API Keys
-$api_key= "58fa4fef-c49a-464e-82be-a30aad009099"
+$api_key= "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
 # how long to wait between status requests
 $status_wait= 10
