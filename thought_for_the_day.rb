@@ -88,6 +88,7 @@ end
 ## Format output
 def analyze(item)
   puts "Analysing #{item.title}"
+  puts "URL #{item.link}"
   sa_content = speech_analysis(item.link)[0]['result']['document'][0]['content']
   # serialize to debug the data structure
   #File.open('sa_res', 'w+') do |f|
