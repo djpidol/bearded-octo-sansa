@@ -1,12 +1,13 @@
-# thought for the day rss -> speech to text
+# Cadena Ser rss -> speech to text
 # https://twitter.com/DJPDeveloper
 #
 # tested with ruby 2.0.0 y 2.1.1
-
+# encoding: UTF-8
+require 'rexml/document'
+require 'open-uri'
+require 'uri'
 require 'net/http'
 require 'json'
-#require 'rss'
-# require 'open-uri'
 
 # this is a script to show how to connect to IdolOnDemand as a rest service
 # and apply speech to text analysis
@@ -14,38 +15,17 @@ require 'json'
 # insert your api_key here, you can request by registering at
 # https://www.idolondemand.com/signup.html
 # and then go to Tools->Account->Manage Your API Keys
-$api_key= "afb65d0b-4658-4ffe-9485-5e14b4331ab7"
+$api_key= "xxx"
 
 # how long to wait between status requests
 $status_wait= 30
 # fuente SER
+$lol = 'http://urotrosfiles.media.streamtheworld.com/otrosfiles/podcasts/571.xml'
 
-$media_items = [[:title => 'Andrea Levy: "Lo más importante es que la situación se reconduzca"',
-  :link => "http://sdmedia.playser.cadenaser.com/Podcast/2015/7/6/000WB0607820150706013923.mp3"],
-  [:title => 'Jordi Sevilla: "El resultado del referéndum no tiene vuelta de hoja"',
-  :link => "http://sdmedia.playser.cadenaser.com/Podcast/2015/7/6/000WB0607820150706013756.mp3"],
-  [:title => 'Alberto Garzón: "No se puede construir una Unión Europea en contra de la gente"',
-  :link => "http://sdmedia.playser.cadenaser.com/Podcast/2015/7/6/000WB0607820150706013228.mp3"],
-  [:title => 'Miguel Urbán: "Lo importante al final es lo que dice y construye la gente"',
-  :link => "http://sdmedia.playser.cadenaser.com/Podcast/2015/7/6/000WB0607820150706012913.mp3"]]
 # language for Speech analisis
 $audio_language="es-ES"
 # language for Sentiment analisis
 $sentiment_language="spa"
-
-# setup proxy
-$proxy_addr = 'proxy.gre.hp.com'
-$proxy_port = 8080
-
-
-##########
-## get RSS feed
-#def get_media_items(url)
-#  uri = URI.parse(url)
-#  puts "Retrieving RSS #{$rss_source}"
-#    feed = RSS::Parser.parse(uri.open(:proxy => "http://"+$proxy_host+":"+$proxy_port+"/"))
-#  return feed.items
-#end
 
 ##########
 ## wait for a REST request
@@ -103,10 +83,10 @@ end
 
 ##########
 ## Format output
-def analyze(item)
-  puts "Analysing Item #{item[0][:title]}"
-  puts "URL #{item[0][:link]}"
-  sa_content = speech_analysis(item[0][:link])[0]['result']['document'][0]['content']
+def analyze(title,guid)
+  puts "Analysing Item #{title}"
+  puts "URL #{guid}"
+  sa_content = speech_analysis(guid)[0]['result']['document'][0]['content']
   # serialize to debug the data structure
   #File.open('sa_res', 'w+') do |f|
   #  Marshal.dump(sa_res, f)
@@ -120,6 +100,10 @@ end
 #Net::HTTP.new('api.idolondemand.com', nil, $proxy_addr, $proxy_port).start { |http|
   # always proxy via your.proxy.addr:8080
 puts "Get media Items from RSS feed and analyze them voice->text->sentiment"
-  $media_items.each {|item|
-  analyze(item)}
-#}
+##########
+## get RSS feed
+puts "Retrieving RSS #{$lol}"
+  REXML::Document.new(open(URI.parse($lol))).elements.
+     each('rss/channel/item') {|item|
+        analyze(item.elements['title'].text,
+           item.elements['guid'].text)}
